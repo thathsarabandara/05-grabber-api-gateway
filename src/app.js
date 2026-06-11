@@ -25,8 +25,12 @@ app.use('/api/', limiter);
 // Metrics Middleware
 app.use(metricsMiddleware);
 
+const authRoutes = require('./routes/auth.routes');
+
 // Routes
 app.use('/api/health', healthRoutes);
+app.use('/api/v1/auth', authRoutes);
+
 
 // Prometheus Metrics Endpoint
 app.get('/metrics', async (req, res) => {

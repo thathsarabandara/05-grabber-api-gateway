@@ -17,6 +17,9 @@ const config = {
     host: process.env.REDIS_HOST || 'localhost',
     port: process.env.REDIS_PORT || 6379,
   },
+  services: {
+    auth: process.env.AUTH_SERVICE_URL || 'http://localhost:8001',
+  }
 };
 
 module.exports = config;
