@@ -10,7 +10,7 @@ router.use(
     target: config.services.auth,
     changeOrigin: true,
     pathRewrite: {
-      '^/api/v1/auth': '/api/v1/auth', // Auth service expects /api/v1/auth as prefix
+      '^/': '/api/v1/auth/', // Prepend the prefix that Express stripped out
     },
     on: {
       proxyReq: fixRequestBody,
