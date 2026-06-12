@@ -6,6 +6,8 @@ const rateLimit = require('express-rate-limit');
 const { metricsMiddleware, register } = require('./middlewares/metrics.middleware');
 const errorHandler = require('./middlewares/error.middleware');
 const healthRoutes = require('./routes/health.routes');
+const gatewayLogger = require('./middlewares/gatewayLogger.middleware');
+const gatewayRateLimiter = require('./middlewares/gatewayRateLimiter.middleware');
 
 const app = express();
 
@@ -14,6 +16,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(gatewayLogger);
 
 // Rate Limiting
 const limiter = rateLimit({
@@ -21,6 +24,7 @@ const limiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per windowMs
 });
 app.use('/api/', limiter);
+app.use('/api/', gatewayRateLimiter);
 
 // Metrics Middleware
 app.use(metricsMiddleware);

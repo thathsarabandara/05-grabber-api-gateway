@@ -18,7 +18,10 @@ const config = {
     port: process.env.REDIS_PORT || 6379,
   },
   services: {
-    auth: process.env.AUTH_SERVICE_URL || 'http://localhost:8001',
+    auth: process.env.AUTH_SERVICE_URL || 'http://auth-service:8001',
+    robot: process.env.ROBOT_SERVICE_URL || 'http://robot-service:8002',
+    telemetry: process.env.TELEMETRY_SERVICE_URL || 'http://telemetry-service:8003',
+    ai: process.env.AI_SERVICE_URL || 'http://ai-service:8004',
   }
 };
 
