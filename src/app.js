@@ -32,12 +32,14 @@ app.use('/api/', gatewayRateLimiter);
 app.use(metricsMiddleware);
 
 const authRoutes = require('./routes/auth.routes');
+const robotRoutes = require('./routes/robot.routes');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const config = require('./config');
 
 // Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/robots', robotRoutes);
 
 // Proxy uploads to Auth Service
 app.use(
