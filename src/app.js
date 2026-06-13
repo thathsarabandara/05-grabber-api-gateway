@@ -12,7 +12,9 @@ const gatewayRateLimiter = require('./middlewares/gatewayRateLimiter.middleware'
 const app = express();
 
 // Security Middlewares
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
@@ -30,10 +32,24 @@ app.use('/api/', gatewayRateLimiter);
 app.use(metricsMiddleware);
 
 const authRoutes = require('./routes/auth.routes');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const config = require('./config');
 
 // Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
+
+// Proxy uploads to Auth Service
+app.use(
+  '/uploads',
+  createProxyMiddleware({
+    target: config.services.auth,
+    changeOrigin: true,
+    pathRewrite: (path, req) => {
+      return '/uploads' + path;
+    },
+  })
+);
 
 
 // Prometheus Metrics Endpoint
