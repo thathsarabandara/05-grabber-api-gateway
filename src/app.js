@@ -23,10 +23,16 @@ app.use(gatewayLogger);
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 2000, // Limit each IP to 2000 requests per windowMs
+  skip: (req) => req.originalUrl.includes('/commands') || req.originalUrl.includes('/ws'),
 });
 app.use('/api/', limiter);
-app.use('/api/', gatewayRateLimiter);
+app.use('/api/', (req, res, next) => {
+  if (req.originalUrl.includes('/commands') || req.originalUrl.includes('/ws')) {
+    return next();
+  }
+  return gatewayRateLimiter(req, res, next);
+});
 
 // Metrics Middleware
 app.use(metricsMiddleware);
