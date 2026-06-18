@@ -16,19 +16,32 @@ const startServer = async () => {
 
   // Proxy WebSocket upgrades to the Robot Service
   const httpProxy = require('http-proxy');
-  const wsProxy = httpProxy.createProxyServer({
+  
+  const wsProxyRobot = httpProxy.createProxyServer({
     target: config.services.robot,
     ws: true
   });
   
-  wsProxy.on('error', (err) => {
-    console.error('[WS Proxy] Error forwarding WebSocket connection:', err);
+  const wsProxyTelemetry = httpProxy.createProxyServer({
+    target: config.services.telemetry,
+    ws: true
+  });
+  
+  wsProxyRobot.on('error', (err) => {
+    console.error('[WS Proxy Robot] Error forwarding WebSocket connection:', err);
+  });
+  
+  wsProxyTelemetry.on('error', (err) => {
+    console.error('[WS Proxy Telemetry] Error forwarding WebSocket connection:', err);
   });
 
   server.on('upgrade', (req, socket, head) => {
     if (req.url.startsWith('/api/v1/robots/ws')) {
       console.log(`[WS Proxy] Upgrading WebSocket connection for: ${req.url}`);
-      wsProxy.ws(req, socket, head);
+      wsProxyRobot.ws(req, socket, head);
+    } else if (req.url.startsWith('/api/v1/telemetry/ws')) {
+      console.log(`[WS Proxy Telemetry] Upgrading WebSocket connection for: ${req.url}`);
+      wsProxyTelemetry.ws(req, socket, head);
     }
   });
 

@@ -39,6 +39,7 @@ app.use(metricsMiddleware);
 
 const authRoutes = require('./routes/auth.routes');
 const robotRoutes = require('./routes/robot.routes');
+const telemetryRoutes = require('./routes/telemetry.routes');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const config = require('./config');
 
@@ -46,6 +47,7 @@ const config = require('./config');
 app.use('/api/health', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/robots', robotRoutes);
+app.use('/api/v1/telemetry', telemetryRoutes);
 
 // Proxy uploads to Auth Service
 app.use(
