@@ -12,7 +12,9 @@ const gatewayRateLimiter = require('./middlewares/gatewayRateLimiter.middleware'
 const app = express();
 
 // Security Middlewares
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
@@ -21,19 +23,43 @@ app.use(gatewayLogger);
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 2000, // Limit each IP to 2000 requests per windowMs
+  skip: (req) => req.originalUrl.includes('/commands') || req.originalUrl.includes('/ws'),
 });
 app.use('/api/', limiter);
-app.use('/api/', gatewayRateLimiter);
+app.use('/api/', (req, res, next) => {
+  if (req.originalUrl.includes('/commands') || req.originalUrl.includes('/ws')) {
+    return next();
+  }
+  return gatewayRateLimiter(req, res, next);
+});
 
 // Metrics Middleware
 app.use(metricsMiddleware);
 
 const authRoutes = require('./routes/auth.routes');
+const robotRoutes = require('./routes/robot.routes');
+const telemetryRoutes = require('./routes/telemetry.routes');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const config = require('./config');
 
 // Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/robots', robotRoutes);
+app.use('/api/v1/telemetry', telemetryRoutes);
+
+// Proxy uploads to Auth Service
+app.use(
+  '/uploads',
+  createProxyMiddleware({
+    target: config.services.auth,
+    changeOrigin: true,
+    pathRewrite: (path, req) => {
+      return '/uploads' + path;
+    },
+  })
+);
 
 
 // Prometheus Metrics Endpoint

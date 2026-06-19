@@ -2,7 +2,7 @@ const { Op } = require('sequelize');
 const { ApiRateLimit } = require('../models');
 
 const WINDOW_MINUTES = 15;
-const MAX_REQUESTS = 100; // Limit per user per route
+const MAX_REQUESTS = 2000; // Limit per user per route
 
 const gatewayRateLimiter = async (req, res, next) => {
   try {
