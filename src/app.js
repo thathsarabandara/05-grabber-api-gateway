@@ -49,6 +49,18 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/robots', robotRoutes);
 app.use('/api/v1/telemetry', telemetryRoutes);
 
+// Proxy gallery uploads to Telemetry Service
+app.use(
+  '/uploads/gallery',
+  createProxyMiddleware({
+    target: config.services.telemetry,
+    changeOrigin: true,
+    pathRewrite: (path, req) => {
+      return '/uploads/gallery' + path;
+    },
+  })
+);
+
 // Proxy uploads to Auth Service
 app.use(
   '/uploads',
