@@ -40,6 +40,7 @@ app.use(metricsMiddleware);
 const authRoutes = require('./routes/auth.routes');
 const robotRoutes = require('./routes/robot.routes');
 const telemetryRoutes = require('./routes/telemetry.routes');
+const aiRoutes = require('./routes/ai.routes');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const config = require('./config');
 
@@ -48,6 +49,7 @@ app.use('/api/health', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/robots', robotRoutes);
 app.use('/api/v1/telemetry', telemetryRoutes);
+app.use('/api/v1/ai', aiRoutes);
 
 // Proxy gallery uploads to Telemetry Service
 app.use(
@@ -57,6 +59,18 @@ app.use(
     changeOrigin: true,
     pathRewrite: (path, req) => {
       return '/uploads/gallery' + path;
+    },
+  })
+);
+
+// Proxy operator uploads to AI Service
+app.use(
+  '/uploads/operators',
+  createProxyMiddleware({
+    target: config.services.ai,
+    changeOrigin: true,
+    pathRewrite: (path, req) => {
+      return '/uploads/operators' + path;
     },
   })
 );
