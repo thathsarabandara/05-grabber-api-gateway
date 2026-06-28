@@ -24,11 +24,20 @@ app.use(gatewayLogger);
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 2000, // Limit each IP to 2000 requests per windowMs
-  skip: (req) => req.originalUrl.includes('/commands') || req.originalUrl.includes('/ws'),
+  skip: (req) => 
+    req.originalUrl.includes('/commands') || 
+    req.originalUrl.includes('/ws') ||
+    req.originalUrl.includes('/gesture/recognize') ||
+    req.originalUrl.includes('/voice/transcribe'),
 });
 app.use('/api/', limiter);
 app.use('/api/', (req, res, next) => {
-  if (req.originalUrl.includes('/commands') || req.originalUrl.includes('/ws')) {
+  if (
+    req.originalUrl.includes('/commands') || 
+    req.originalUrl.includes('/ws') ||
+    req.originalUrl.includes('/gesture/recognize') ||
+    req.originalUrl.includes('/voice/transcribe')
+  ) {
     return next();
   }
   return gatewayRateLimiter(req, res, next);
