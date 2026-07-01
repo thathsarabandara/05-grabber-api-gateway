@@ -1,20 +1,24 @@
-# Use Node.js LTS version
-FROM node:20-slim
+# Stage 1: Build dependencies
+FROM node:20-slim AS builder
+WORKDIR /app
 
-# Create app directory
-WORKDIR /usr/src/app
-
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
-
 RUN npm install --omit=dev
 
-# Bundle app source
-COPY . .
+# Stage 2: Runner
+FROM node:20-slim AS runner
+WORKDIR /app
 
-# Expose the port the app runs on
-EXPOSE 5000
+ENV NODE_ENV=production
+ENV PORT=8000
 
-# Start the application
-CMD [ "npm", "start" ]
+COPY --from=builder /app/node_modules ./node_modules
+COPY package*.json ./
+COPY src/ ./src/
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD node -e "const http = require('http'); const req = http.request('http://localhost:8000/api/health', { timeout: 2000 }, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
+
+CMD ["node", "src/server.js"]
