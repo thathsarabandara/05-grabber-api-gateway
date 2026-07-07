@@ -213,8 +213,8 @@ NODE_ENV=development
 
 # Database Configuration
 DB_HOST=localhost
-DB_USER=thathsara
-DB_PASSWORD=BandaPutha
+DB_USER=
+DB_PASSWORD=
 DB_NAME=grabber_gateway
 
 # Redis configuration 
@@ -222,7 +222,7 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 
 # JWT Cryptographic Keys
-JWT_SECRET=Eiui9vAzU/yEexBweuDV9E/gDNvliTAoit1nKWTJDWQ=
+JWT_SECRET=
 JWT_EXPIRES_IN=24h
 
 # Downstream Microservices URLs
@@ -258,15 +258,15 @@ docker compose logs -f api
 
 | Repository | Purpose |
 |---|---|
-| [`01-grabber-architecture`](../01-grabber-architecture) | System blueprints, MQTT schemas, and database designs |
-| [`02-grabber-firmware`](../02-grabber-firmware) | ESP32 kinematics controllers and ESP32-CAM stream endpoints |
-| [`03-grabber-mobile-app`](../03-grabber-mobile-app) | Flutter app remote teleoperation HUD |
-| [`04-grabber-web-dashboard`](../04-grabber-web-dashboard) | React operator control panel and 3D digital twin |
-| [`06-grabber-auth-service`](../06-grabber-auth-service) | Service managing user profiles, image updates, and JWT sessions |
-| [`07-grabber-robot-service`](../07-grabber-robot-service) | Service processing joint commands and homing schedules |
-| [`08-grabber-telemetry-service`](../08-grabber-telemetry-service) | Core service publishing live telemetry and webcam captures |
-| [`09-grabber-ai-service`](../09-grabber-ai-service) | Engine orchestrating autonomous jobs and computer vision tasks |
-| [`11-grabber-devops-infras`](../11-grabber-devops-infras) | Production Docker manifests, Prometheus, and Grafana stacks |
+| [`01-grabber-architecture`](https://github.com/thathsarabandara/01-grabber-architecture) | System blueprints, MQTT schemas, and database designs |
+| [`02-grabber-firmware`](https://github.com/thathsarabandara/02-grabber-firmware) | ESP32 kinematics controllers and ESP32-CAM stream endpoints |
+| [`03-grabber-mobile-app`](https://github.com/thathsarabandara/03-grabber-mobile-app) | Flutter app remote teleoperation HUD |
+| [`04-grabber-web-dashboard`](https://github.com/thathsarabandara/04-grabber-web-dashboard) | React operator control panel and 3D digital twin |
+| [`06-grabber-auth-service`](https://github.com/thathsarabandara/06-grabber-auth-service) | Service managing user profiles, image updates, and JWT sessions |
+| [`07-grabber-robot-service`](https://github.com/thathsarabandara/07-grabber-robot-service) | Service processing joint commands and homing schedules |
+| [`08-grabber-telemetry-service`](https://github.com/thathsarabandara/08-grabber-telemetry-service) | Core service publishing live telemetry and webcam captures |
+| [`09-grabber-ai-service`](https://github.com/thathsarabandara/09-grabber-ai-service) | Engine orchestrating autonomous jobs and computer vision tasks |
+| [`11-grabber-devops-infras`](https://github.com/thathsarabandara/10-grabber-devops-infras) | Production Docker manifests, Prometheus, and Grafana stacks |
 
 ---
 
