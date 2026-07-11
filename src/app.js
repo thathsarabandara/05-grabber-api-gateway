@@ -24,11 +24,20 @@ app.use(gatewayLogger);
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 2000, // Limit each IP to 2000 requests per windowMs
-  skip: (req) => req.originalUrl.includes('/commands') || req.originalUrl.includes('/ws'),
+  skip: (req) => 
+    req.originalUrl.includes('/commands') || 
+    req.originalUrl.includes('/ws') ||
+    req.originalUrl.includes('/gesture/recognize') ||
+    req.originalUrl.includes('/voice/transcribe'),
 });
 app.use('/api/', limiter);
 app.use('/api/', (req, res, next) => {
-  if (req.originalUrl.includes('/commands') || req.originalUrl.includes('/ws')) {
+  if (
+    req.originalUrl.includes('/commands') || 
+    req.originalUrl.includes('/ws') ||
+    req.originalUrl.includes('/gesture/recognize') ||
+    req.originalUrl.includes('/voice/transcribe')
+  ) {
     return next();
   }
   return gatewayRateLimiter(req, res, next);
@@ -40,6 +49,7 @@ app.use(metricsMiddleware);
 const authRoutes = require('./routes/auth.routes');
 const robotRoutes = require('./routes/robot.routes');
 const telemetryRoutes = require('./routes/telemetry.routes');
+const aiRoutes = require('./routes/ai.routes');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const config = require('./config');
 
@@ -48,6 +58,31 @@ app.use('/api/health', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/robots', robotRoutes);
 app.use('/api/v1/telemetry', telemetryRoutes);
+app.use('/api/v1/ai', aiRoutes);
+
+// Proxy gallery uploads to Telemetry Service
+app.use(
+  '/uploads/gallery',
+  createProxyMiddleware({
+    target: config.services.telemetry,
+    changeOrigin: true,
+    pathRewrite: (path, req) => {
+      return '/uploads/gallery' + path;
+    },
+  })
+);
+
+// Proxy operator uploads to AI Service
+app.use(
+  '/uploads/operators',
+  createProxyMiddleware({
+    target: config.services.ai,
+    changeOrigin: true,
+    pathRewrite: (path, req) => {
+      return '/uploads/operators' + path;
+    },
+  })
+);
 
 // Proxy uploads to Auth Service
 app.use(
