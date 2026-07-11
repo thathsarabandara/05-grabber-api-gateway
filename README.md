@@ -8,6 +8,7 @@
 [![Database](https://img.shields.io/badge/Database-MySQL%20%7C%20Redis-blue.svg?style=flat-square)]()
 [![Observability](https://img.shields.io/badge/Metrics-Prometheus%20%7C%20Grafana-orange.svg?style=flat-square)]()
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen.svg?style=flat-square)]()
+[![GitHub CI](https://github.com/thathsarabandara/05-grabber-api-gateway/actions/workflows/ci.yml/badge.svg?branch=main)]()
 
 ---
 
@@ -251,6 +252,18 @@ docker compose up -d --build
 # View logs to verify database connectivity
 docker compose logs -f api
 ```
+
+## ⚙️ CI/CD Pipeline
+
+This project uses **GitHub Actions** for Continuous Integration and Deployment.
+The pipeline consists of the following steps:
+- **Checkout**: Fetch source code.
+- **Environment**: Set up Node.js 20 LTS.
+- **Install Dependencies**: Install NPM packages.
+- **Lint**: Run npm audit and ESLint.
+- **Test**: Run test suite.
+- **Build**: Build Docker image.
+- **Push**: Push to GitHub Container Registry (GHCR).
 
 ---
 
